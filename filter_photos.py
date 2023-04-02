@@ -37,6 +37,10 @@ if __name__ == '__main__':
   args = parser.parse_args()
   filter(args.folder_path)
 
+  # HOW TO USE
+  # Run the python file with the first parameter as the path to the folder containing the images
+  # Example  python filter_photos.py /Users/calvindong/Documents/Repos/flickr-scrape/images/group_91922148_N00
+
 
 
 

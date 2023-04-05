@@ -1,0 +1,10 @@
+{
+  "dependencies": {
+    "@roboflow/floodfill": "^2.1.4",
+    "async": "^3.2.4",
+    "bcrypt": "^5.1.0",
+    "canvas": "^2.11.2",
+    "handlebars": "^4.7.7",
+    "lodash": "^4.17.21"
+  }
+}

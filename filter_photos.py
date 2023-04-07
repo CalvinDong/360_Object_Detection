@@ -6,7 +6,9 @@ from tqdm import tqdm
 
 def filter(folder_path):
   print("filter the files here")
-  #print(folder_path)
+  if not os.path.isdir("data"):
+    os.mkdir(os.path.join(folder_path, "discarded"))
+  
   files = os.listdir(folder_path)
   for file in tqdm(files):
     image_path = os.path.join(folder_path, file)
@@ -15,7 +17,7 @@ def filter(folder_path):
       image = Image.open(image_path)
       Image.MAX_IMAGE_PIXELS = None # Prevent PIL max image size protection failure (thinks a compression attack is occurring)
 
-      if image.height/image.width > 0.7: # Try to remove any little big planet photos which tend to have a a more 1:1 ratio or 0.7
+      if image.height/image.width > 0.6: # Try to remove any little big planet photos which tend to have a a more 1:1 ratio or 0.7
         shutil.move(image_path, os.path.join(folder_path, "discarded" ,file))
     except Exception as e:
       print(e)

@@ -38,7 +38,7 @@ const OPEN_IMAGES = path.join(os.homedir(), "OpenImages");
 const BACKGROUNDS = fs.readFileSync(__dirname + "/OpenImages.filtered.txt", "utf-8").split("\n");
 
 // location of folders containing jpgs on your filesystem (clone from here: https://github.com/Horea94/Fruit-Images-Dataset)
-const FRUITS = path.join(os.homedir(), "Fruit-Images-Dataset/Training");
+const FRUITS = path.join("/Users/calvindong/Documents/Repos/360_Object_Detection/Datasets/fruits-360/Training");
 
 //---------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------
 
@@ -108,6 +108,8 @@ _.defer(function() {
   });
 });
 
+
+
 const createImage = function(filename, cb) {
   // select and load a random background
   const BG = _.sample(BACKGROUNDS);
@@ -147,7 +149,7 @@ const createImage = function(filename, cb) {
               },
               function(cb) {
                   // write the bounding boxes to the XML annotation file
-                  fs.writeFileSync(
+                  /*fs.writeFileSync(
                       path.join(__dirname, "output", filename+".xml"),
                       vocTemplate({
                           filename: filename + ".jpg",
@@ -155,9 +157,12 @@ const createImage = function(filename, cb) {
                           height: CANVAS_HEIGHT,
                           boxes: boxes
                       })
-                  );
+                  );*/
 
-                  cb(null);
+                 // cb(null);
+
+                 // Create the new YOLOv7 label file here
+                 
               }
           ], function() {
               // we're done generating this image

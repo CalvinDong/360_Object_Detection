@@ -33,7 +33,7 @@ const MAX_OBJECTS = 20;
 const OUTPUT_DIR = path.join(__dirname, "output");
 
 // location of jpgs on your filesystem (validation set from here: https://www.figure-eight.com/dataset/open-images-annotated-with-bounding-boxes/)
-const OPEN_IMAGES = path.join(os.homedir(), "OpenImages");
+const OPEN_IMAGES = path.join("/Users/calvindong/Documents/Repos/360_Object_Detection/Datasets/Backgrounds");
 // text file of good candidate images (I selected these for size & no fruit content)
 //const BACKGROUNDS = fs.readFileSync(__dirname + "/OpenImages.filtered.txt", "utf-8").split("\n");
 
@@ -83,12 +83,26 @@ _.each(folders, function(folder, i) {
 // when we randomly select a class, we want them equally weighted
 classes = _.uniq(classes);
 
-console.log(classes.length)
-fruit = []
-classes.map( x => {
-  fruit.push(x)
-})
-
-console.log(fruit)
+//console.log(fruit)
 
 if (!fs.existsSync(OUTPUT_DIR)) fs.mkdirSync(OUTPUT_DIR);
+
+let back = _.filter(fs.readdirSync(OPEN_IMAGES), function(filename) {
+  // only grab jpg images
+  return filename.match(/\.jpe?g/);
+});
+
+const folder = fs.readdirSync("/Users/calvindong/Documents/Repos/360_Object_Detection/Datasets/Backgrounds");
+const target_length = folder.length.toString().length
+//console.log(target_length)
+//let name = i.toString().padStart(target_length, '0')
+let background = Array.from({ length: back.length}, (value, index) => {
+  value = index + 1
+  value = value.toString().padStart(target_length, '0')
+  value = value + ".jpg"
+  return value
+})
+const BG = _.sample(background);
+const yoloIndex = background.indexOf(BG)
+console.log(BG)
+console.log(yoloIndex)

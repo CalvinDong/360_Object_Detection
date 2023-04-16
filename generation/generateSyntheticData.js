@@ -13,7 +13,7 @@ const floodfill = require('@roboflow/floodfill')(CanvasRenderingContext2D);
 
 // for writing annotations
 var Handlebars = require('handlebars');
-var vocTemplate = Handlebars.compile(fs.readFileSync(__dirname + "/voc.tmpl", "utf-8"));
+//var vocTemplate = Handlebars.compile(fs.readFileSync(__dirname + "/voc.tmpl", "utf-8"));
 
 
 // how many images we want to create
@@ -33,10 +33,24 @@ const MAX_OBJECTS = 20;
 const OUTPUT_DIR = path.join(__dirname, "output");
 
 // location of jpgs on your filesystem (validation set from here: https://www.figure-eight.com/dataset/open-images-annotated-with-bounding-boxes/)
-const OPEN_IMAGES = path.join(os.homedir(), "OpenImages");
+const OPEN_IMAGES = path.join("/Users/calvindong/Documents/Repos/360_Object_Detection/Datasets/Backgrounds_Test");
 // text file of good candidate images (I selected these for size & no fruit content)
-const BACKGROUNDS = fs.readFileSync(__dirname + "/OpenImages.filtered.txt", "utf-8").split("\n");
+//const BACKGROUNDS = fs.readFileSync(__dirname + "/OpenImages.filtered.txt", "utf-8").split("\n");
+//const target_length = OPEN_IMAGES.length.toString().length
+target_length = 5  //PRevious line is correct
 
+let back = _.filter(fs.readdirSync(OPEN_IMAGES), function(filename) {
+  // only grab jpg images
+  return filename.match(/\.jpe?g/);
+});
+
+let BACKGROUNDS = Array.from({ length: back.length}, (value, index) => {
+  value = index + 1
+  value = value.toString().padStart(target_length, '0')
+  value = value + ".jpg"
+  return value
+})
+console.log(BACKGROUNDS)
 // location of folders containing jpgs on your filesystem (clone from here: https://github.com/Horea94/Fruit-Images-Dataset)
 const FRUITS = path.join("/Users/calvindong/Documents/Repos/360_Object_Detection/Datasets/fruits-360/Training");
 
@@ -129,8 +143,9 @@ const createImage = function(filename, cb) {
       var objects = 1+Math.floor(Math.random()*Math.random()*(MAX_OBJECTS-1));
 
       var boxes = [];
-      async.timesSeries(objects, function(i, cb) {
+      async.timesSeries(objects, function(i, cb) { // timeSeries is an async iterator where first argument is number of times.
           // for each object, add it to the image and then record its bounding box
+          let label;
           addRandomObject(canvas, context, function(box) {
               boxes.push(box);
               cb(null);
@@ -178,6 +193,7 @@ const createImage = function(filename, cb) {
 const addRandomObject = function(canvas, context, cb) {
   const cls = _.sample(classes);
   const object = _.sample(OBJECTS[cls]);
+  let yoloIndex = classes.indexOf(cls)
 
   loadImage(path.join(FRUITS, object)).then(function(img) {
       // erase white edges
@@ -227,6 +243,8 @@ const addRandomObject = function(canvas, context, cb) {
 
       // return the type and bounds of the object we placed
       // VOC XML's top-left pixel is 1,1
+      yoloLabel = `${yoloIndex} ${((x + canvas.width/2)/canvas.width).toFixed(6)}`
+      console.log(yoloLabel)
       cb({
           cls: cls,
           xmin: Math.floor(x)+1,

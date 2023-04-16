@@ -12,7 +12,7 @@ for (let i = 0; i < folder.length; i++){
   let mime_type = folder[i].substring(folder[i].indexOf('.') + 1)
   let name = i.toString().padStart(target_length, '0')
 
-  fs.rename(p, `${folder_path}/${name}.${mime_type}` , err => {
+  fs.rename(p, `${folder_path}/${name}.${mime_type.toLowerCase()}` , err => {
     if (err) {
       console.error(err);
     }

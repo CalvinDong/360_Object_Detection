@@ -227,7 +227,7 @@ const addRandomObject = function(canvas, context, cb) {
       objectContext.randomHSL(0.05, 0.4, 0.4);
 
       // randomly scale the image
-      var scaleAmount = 0.5;
+      var scaleAmount = 1.0;
       const scale = 1 + Math.random()*scaleAmount*2-scaleAmount;
 
       var w = img.width * scale;

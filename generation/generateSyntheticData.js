@@ -127,6 +127,7 @@ _.defer(function() {
 const createImage = function(filename, cb) {
   // select and load a random background
   const BG = _.sample(BACKGROUNDS);
+  let labels = [];
   loadImage(path.join(OPEN_IMAGES, BG)).then(function(img) {
       var canvas = createCanvas(CANVAS_WIDTH, CANVAS_HEIGHT);
       var context = canvas.getContext('2d');
@@ -145,13 +146,20 @@ const createImage = function(filename, cb) {
       var boxes = [];
       async.timesSeries(objects, function(i, cb) { // timeSeries is an async iterator where first argument is number of times.
           // for each object, add it to the image and then record its bounding box
-          let label;
-          addRandomObject(canvas, context, function(box) {
-              boxes.push(box);
+          addRandomObject(canvas, context, function(objectLabel) {
+              labels.push(objectLabel)
+              //boxes.push(box);
               cb(null);
           });
       }, function() {
           // write our files to disk
+          console.log(labels)
+          let writelabel = fs.createWriteStream(path.join(__dirname, "output/labels", filename+".txt"));
+          labels.forEach((label) => {
+            writelabel.write(label)
+            writelabel.write("\n")
+          })
+          writelabel.end()
           async.parallel([
               function(cb) {
                   // write the JPG file
@@ -243,15 +251,21 @@ const addRandomObject = function(canvas, context, cb) {
 
       // return the type and bounds of the object we placed
       // VOC XML's top-left pixel is 1,1
-      yoloLabel = `${yoloIndex} ${((x + canvas.width/2)/canvas.width).toFixed(6)}`
-      console.log(yoloLabel)
-      cb({
+      //yoloLabel = `${yoloIndex} ${((x + canvas.width/2)/canvas.width).toFixed(6)} ${((y + canvas.height/2)/canvas.width).toFixed(6)} ${(w/canvas.width).toFixed(6)} ${(y/canvas.height).toFixed(6)} `
+      xmin = Math.floor(x)+1,
+      xmax = Math.ceil(x + w)+1,
+      ymin = Math.floor(y)+1,
+      ymax = Math.ceil(y + h)+1
+      yoloLabel = `${yoloIndex} ${(((xmax + xmin)/2)/canvas.width).toFixed(8)} ${(((ymax + ymin)/2)/canvas.height).toFixed(8)} ${((xmax - xmin)/canvas.width).toFixed(8)} ${((ymax - ymin)/canvas.height).toFixed(8)}`
+      //console.log(yoloLabel)
+      cb(yoloLabel)
+      /*cb({
           cls: cls,
           xmin: Math.floor(x)+1,
           xmax: Math.ceil(x + w)+1,
           ymin: Math.floor(y)+1,
           ymax: Math.ceil(y + h)+1
-      });
+      });*/
   });
 };
 

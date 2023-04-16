@@ -6,18 +6,17 @@ import yaml
 import os
 
 random.seed(0)
-class_name_to_id_mapping = {}
+class_id_to_name_mapping = {}
 with open("/Users/calvindong/Documents/Repos/360_Object_Detection/generation/data.yml", "r") as stream:
     try:
         data = yaml.safe_load(stream)
         i = 0
         for fruit in data["names"]:
-            class_name_to_id_mapping[fruit] = i
+            class_id_to_name_mapping[i] = fruit
             i += 1
     except yaml.YAMLError as exc:
         print(exc)
 
-class_id_to_name_mapping = dict(zip(class_name_to_id_mapping.values(), class_name_to_id_mapping.keys()))
 print(class_id_to_name_mapping)
 
 def plot_bounding_box(image, annotation_list):

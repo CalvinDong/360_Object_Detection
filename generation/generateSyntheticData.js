@@ -17,7 +17,7 @@ var Handlebars = require('handlebars');
 
 
 // how many images we want to create
-const IMAGES_TO_GENERATE = 5000;
+const IMAGES_TO_GENERATE = 10000;
 // how many to generate at one time
 const CONCURRENCY = Math.max(1, os.cpus().length - 1);
 
@@ -33,7 +33,7 @@ const MAX_OBJECTS = 20;
 const OUTPUT_DIR = path.join(__dirname, "output");
 
 // location of jpgs on your filesystem (validation set from here: https://www.figure-eight.com/dataset/open-images-annotated-with-bounding-boxes/)
-const OPEN_IMAGES = path.join("/Users/calvindong/Documents/Repos/360_Object_Detection/Datasets/Backgrounds_Test");
+const OPEN_IMAGES = path.join("/Users/calvindong/Documents/Repos/360_Object_Detection/Datasets/Backgrounds");
 // text file of good candidate images (I selected these for size & no fruit content)
 //const BACKGROUNDS = fs.readFileSync(__dirname + "/OpenImages.filtered.txt", "utf-8").split("\n");
 //const target_length = OPEN_IMAGES.length.toString().length
@@ -105,6 +105,7 @@ if (!fs.existsSync(OUTPUT_DIR)) fs.mkdirSync(OUTPUT_DIR);
 // create the images
 _.defer(function() {
   var num_completed = 0;
+  let k = 0;
   const progress_threshold = Math.max(1, Math.round( Math.min(100, IMAGES_TO_GENERATE/1000) ) );
   async.timesLimit(IMAGES_TO_GENERATE, CONCURRENCY, function(i, cb) {
       createImage(i, function() {
@@ -153,7 +154,7 @@ const createImage = function(filename, cb) {
           });
       }, function() {
           // write our files to disk
-          console.log(labels)
+          //console.log(labels)
           let writelabel = fs.createWriteStream(path.join(__dirname, "output/labels", filename+".txt"));
           labels.forEach((label) => {
             writelabel.write(label)
@@ -227,8 +228,10 @@ const addRandomObject = function(canvas, context, cb) {
       objectContext.randomHSL(0.05, 0.4, 0.4);
 
       // randomly scale the image
-      var scaleAmount = 1.0;
-      const scale = 1 + Math.random()*scaleAmount*2-scaleAmount;
+      var scaleAmount = 2.0;
+      //const scale = 1 + Math.random()*scaleAmount*2-scaleAmount;
+      const scale = 0.8 + Math.random()*scaleAmount*2;
+      //console.log(scale)
 
       var w = img.width * scale;
       var h = img.height * scale;

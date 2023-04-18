@@ -17,7 +17,7 @@ var Handlebars = require('handlebars');
 
 
 // how many images we want to create
-const IMAGES_TO_GENERATE = 10000;
+const IMAGES_TO_GENERATE = 18;
 // how many to generate at one time
 const CONCURRENCY = Math.max(1, os.cpus().length - 1);
 
@@ -105,7 +105,6 @@ if (!fs.existsSync(OUTPUT_DIR)) fs.mkdirSync(OUTPUT_DIR);
 // create the images
 _.defer(function() {
   var num_completed = 0;
-  let k = 0;
   const progress_threshold = Math.max(1, Math.round( Math.min(100, IMAGES_TO_GENERATE/1000) ) );
   async.timesLimit(IMAGES_TO_GENERATE, CONCURRENCY, function(i, cb) {
       createImage(i, function() {
@@ -183,7 +182,7 @@ const createImage = function(filename, cb) {
                       })
                   );*/
 
-                 // cb(null);
+                cb(null);
 
                  // Create the new YOLOv7 label file here
                  
@@ -244,11 +243,20 @@ const addRandomObject = function(canvas, context, cb) {
       var y = Math.floor(Math.random()*max_height);
 
       context.save();
+      let compress = false;
 
+      if ((y < CANVAS_HEIGHT/7) || (y > CANVAS_HEIGHT - CANVAS_HEIGHT/7 - h)){ // Add compression to fruit if its near top or bottom
+        context.transform(1, 0, 1.5, 1, 0, 0)
+        compress = true
+      }
+      //context.transform(1, 0, 1.5, 1, 0, 0)
       // randomly rotate and draw the image
       const radians = Math.random()*Math.PI*2;
       context.translate(x+w/2, y+h/2);
-      context.rotate(radians);
+      if (!compress){
+        context.rotate(radians);
+      }
+      //context.transform(1, 1.5, 0, 1, 0, 0)
       context.drawImage(objectCanvas, -w/2, -h/2, w, h);
       context.restore();
 

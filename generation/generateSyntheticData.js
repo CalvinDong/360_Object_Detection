@@ -19,9 +19,7 @@ var Handlebars = require('handlebars');
 // how many images we want to create
 const IMAGES_TO_GENERATE = 18;
 // how many to generate at one time
-//const CONCURRENCY = Math.max(1, os.cpus().length - 1);
-const CONCURRENCY = IMAGES_TO_GENERATE
-console.log(CONCURRENCY)
+const CONCURRENCY = Math.max(1, os.cpus().length - 1);
 
 // approximate aspect ratio of our phone camera
 // scaled to match the input of CreateML models
@@ -35,7 +33,7 @@ const MAX_OBJECTS = 20;
 const OUTPUT_DIR = path.join(__dirname, "output");
 
 // location of jpgs on your filesystem (validation set from here: https://www.figure-eight.com/dataset/open-images-annotated-with-bounding-boxes/)
-const OPEN_IMAGES = path.join("E:\\Backgrounds");
+const OPEN_IMAGES = path.join("/Users/calvindong/Documents/Repos/360_Object_Detection/Datasets/Backgrounds");
 // text file of good candidate images (I selected these for size & no fruit content)
 //const BACKGROUNDS = fs.readFileSync(__dirname + "/OpenImages.filtered.txt", "utf-8").split("\n");
 //const target_length = OPEN_IMAGES.length.toString().length
@@ -54,7 +52,7 @@ let BACKGROUNDS = Array.from({ length: back.length}, (value, index) => {
 })
 console.log(BACKGROUNDS)
 // location of folders containing jpgs on your filesystem (clone from here: https://github.com/Horea94/Fruit-Images-Dataset)
-const FRUITS = path.join("C:\\Users\\CalvinDong\\source\\repos\\Fruit-Images-Dataset\\Training");
+const FRUITS = path.join("/Users/calvindong/Documents/Repos/360_Object_Detection/Datasets/fruits-360/Training");
 
 //---------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------
 

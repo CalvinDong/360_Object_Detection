@@ -1,12 +1,14 @@
 import os
 import random
 import subprocess
-import tqdm
+import shutil
+
+from tqdm import tqdm
 
 def randomNumbers(fruitImages):
    randomSet = set()
    fruitTotal = len(fruitImages)
-   proportion = int(fruitTotal * 0.2)
+   proportion = int(fruitTotal * 0.25)
    while (len(randomSet) < proportion):
       randomSet.add(random.randint(0, fruitTotal) - 1)
    return randomSet
@@ -15,18 +17,21 @@ inputDir = "/Users/calvindong/Documents/Repos/Fruit-Images-Dataset/Training"
 outputDir = "/Users/calvindong/Documents/Repos/360_Object_Detection/Datasets/AugmentFruits"
 
 if (os.path.exists(outputDir) == False):
-      newFruitDir = os.mkdir(outputDir)
+      newFruitClassDir = os.mkdir(outputDir)
 
 fruits = os.listdir(inputDir)
-for fruit in fruits:
+for fruit in tqdm(fruits):
     fruitPath = os.path.join(inputDir, fruit)
     fruitImages = os.listdir(fruitPath)
     randomSet = randomNumbers(fruitImages)
 
     newFruitDir = os.path.join(outputDir, fruit)
+
+    #Need to copy the original folder instead
+
     if (os.path.exists(newFruitDir) == False):
-      newFruitDir = os.mkdir(newFruitDir)
-    
+      shutil.copytree(fruitPath, newFruitDir)
+  
     for num in randomSet:
       #print(fruitImages[num])
       if (num%2 == 1):

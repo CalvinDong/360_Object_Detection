@@ -8,7 +8,7 @@ from tqdm import tqdm
 def randomNumbers(fruitImages):
    randomSet = set()
    fruitTotal = len(fruitImages)
-   proportion = int(fruitTotal * 0.25)
+   proportion = int(fruitTotal * 0.35)
    while (len(randomSet) < proportion):
       randomSet.add(random.randint(0, fruitTotal) - 1)
    return randomSet
@@ -21,6 +21,9 @@ if (os.path.exists(outputDir) == False):
 
 fruits = os.listdir(inputDir)
 for fruit in tqdm(fruits):
+    if (fruit[0] == "."):
+       continue
+    
     fruitPath = os.path.join(inputDir, fruit)
     fruitImages = os.listdir(fruitPath)
     randomSet = randomNumbers(fruitImages)
@@ -35,7 +38,6 @@ for fruit in tqdm(fruits):
     for num in randomSet:
       #print(fruitImages[num])
       if (num%2 == 1):
-         x = 0
          cmd = f'convert "{os.path.join(fruitPath, fruitImages[num])}" -sample 100%x25% "{os.path.join(newFruitDir, fruitImages[num])}"'
       else:
          cmd = f'convert "{os.path.join(fruitPath, fruitImages[num])}" -virtual-pixel White -distort Arc 60  "{os.path.join(newFruitDir, fruitImages[num])}"'

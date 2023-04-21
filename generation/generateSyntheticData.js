@@ -13,11 +13,10 @@ const floodfill = require('@roboflow/floodfill')(CanvasRenderingContext2D);
 
 // for writing annotations
 var Handlebars = require('handlebars');
-//var vocTemplate = Handlebars.compile(fs.readFileSync(__dirname + "/voc.tmpl", "utf-8"));
 
 
 // how many images we want to create
-const IMAGES_TO_GENERATE = 18;
+const IMAGES_TO_GENERATE = 28;
 // how many to generate at one time
 const CONCURRENCY = Math.max(1, os.cpus().length - 1);
 
@@ -34,8 +33,6 @@ const OUTPUT_DIR = path.join(__dirname, "output");
 
 // location of jpgs on your filesystem (validation set from here: https://www.figure-eight.com/dataset/open-images-annotated-with-bounding-boxes/)
 const OPEN_IMAGES = path.join("/Users/calvindong/Documents/Repos/360_Object_Detection/Datasets/Backgrounds");
-// text file of good candidate images (I selected these for size & no fruit content)
-//const BACKGROUNDS = fs.readFileSync(__dirname + "/OpenImages.filtered.txt", "utf-8").split("\n");
 //const target_length = OPEN_IMAGES.length.toString().length
 target_length = 5  //PRevious line is correct
 
@@ -52,7 +49,7 @@ let BACKGROUNDS = Array.from({ length: back.length}, (value, index) => {
 })
 console.log(BACKGROUNDS)
 // location of folders containing jpgs on your filesystem (clone from here: https://github.com/Horea94/Fruit-Images-Dataset)
-const FRUITS = path.join("/Users/calvindong/Documents/Repos/360_Object_Detection/Datasets/fruits-360/Training");
+const FRUITS = path.join("/Users/calvindong/Documents/Repos/360_Object_Detection/Datasets/AugmentFruits");
 
 //---------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------
 
@@ -148,7 +145,6 @@ const createImage = function(filename, cb) {
           // for each object, add it to the image and then record its bounding box
           addRandomObject(canvas, context, function(objectLabel) {
               labels.push(objectLabel)
-              //boxes.push(box);
               cb(null);
           });
       }, function() {
@@ -163,7 +159,7 @@ const createImage = function(filename, cb) {
           async.parallel([
               function(cb) {
                   // write the JPG file
-                  const out = fs.createWriteStream(path.join(__dirname, "output", filename+".jpg"));
+                  const out = fs.createWriteStream(path.join(__dirname, "output/images", filename+".jpg"));
                   const stream = canvas.createJPEGStream();
                   stream.pipe(out);
                   out.on('finish', function() {
@@ -171,21 +167,7 @@ const createImage = function(filename, cb) {
                   });
               },
               function(cb) {
-                  // write the bounding boxes to the XML annotation file
-                  /*fs.writeFileSync(
-                      path.join(__dirname, "output", filename+".xml"),
-                      vocTemplate({
-                          filename: filename + ".jpg",
-                          width: CANVAS_WIDTH,
-                          height: CANVAS_HEIGHT,
-                          boxes: boxes
-                      })
-                  );*/
-
                 cb(null);
-
-                 // Create the new YOLOv7 label file here
-                 
               }
           ], function() {
               // we're done generating this image
@@ -243,40 +225,24 @@ const addRandomObject = function(canvas, context, cb) {
       var y = Math.floor(Math.random()*max_height);
 
       context.save();
-      let compress = false;
 
-      if ((y < CANVAS_HEIGHT/7) || (y > CANVAS_HEIGHT - CANVAS_HEIGHT/7 - h)){ // Add compression to fruit if its near top or bottom
-        context.transform(1, 0, 1.5, 1, 0, 0)
-        compress = true
-      }
-      //context.transform(1, 0, 1.5, 1, 0, 0)
+      // Or we can use pre squished images here
+
       // randomly rotate and draw the image
       const radians = Math.random()*Math.PI*2;
       context.translate(x+w/2, y+h/2);
-      if (!compress){
-        context.rotate(radians);
-      }
-      //context.transform(1, 1.5, 0, 1, 0, 0)
+      context.rotate(radians);
       context.drawImage(objectCanvas, -w/2, -h/2, w, h);
       context.restore();
 
       // return the type and bounds of the object we placed
-      // VOC XML's top-left pixel is 1,1
-      //yoloLabel = `${yoloIndex} ${((x + canvas.width/2)/canvas.width).toFixed(6)} ${((y + canvas.height/2)/canvas.width).toFixed(6)} ${(w/canvas.width).toFixed(6)} ${(y/canvas.height).toFixed(6)} `
-      xmin = Math.floor(x)+1,
-      xmax = Math.ceil(x + w)+1,
-      ymin = Math.floor(y)+1,
+      xmin = Math.floor(x)+1
+      xmax = Math.ceil(x + w)+1
+      ymin = Math.floor(y)+1
       ymax = Math.ceil(y + h)+1
       yoloLabel = `${yoloIndex} ${(((xmax + xmin)/2)/canvas.width).toFixed(8)} ${(((ymax + ymin)/2)/canvas.height).toFixed(8)} ${((xmax - xmin)/canvas.width).toFixed(8)} ${((ymax - ymin)/canvas.height).toFixed(8)}`
       //console.log(yoloLabel)
       cb(yoloLabel)
-      /*cb({
-          cls: cls,
-          xmin: Math.floor(x)+1,
-          xmax: Math.ceil(x + w)+1,
-          ymin: Math.floor(y)+1,
-          ymax: Math.ceil(y + h)+1
-      });*/
   });
 };
 

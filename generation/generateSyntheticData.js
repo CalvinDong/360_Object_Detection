@@ -16,7 +16,7 @@ var Handlebars = require('handlebars');
 
 
 // how many images we want to create
-const IMAGES_TO_GENERATE = 28;
+const IMAGES_TO_GENERATE = 200;
 // how many to generate at one time
 const CONCURRENCY = Math.max(1, os.cpus().length - 1);
 
@@ -215,7 +215,7 @@ const addRandomObject = function(canvas, context, cb) {
       //console.log(scale)
 
       var w = img.width * scale;
-      var h = img.height * scale;
+      var h = img.width * scale;
 
       // place object at random position on top of the background
       const max_width = canvas.width - w;
@@ -234,6 +234,9 @@ const addRandomObject = function(canvas, context, cb) {
       context.rotate(radians);
       context.drawImage(objectCanvas, -w/2, -h/2, w, h);
       context.restore();
+
+      //w = objectContext.width
+      //h = objectContext.height
 
       // return the type and bounds of the object we placed
       xmin = Math.floor(x)+1

@@ -45,7 +45,7 @@ def plot_bounding_box(image, annotation_list):
 
 # Get any random annotation file 
 #annotation_file = random.choice(annotations)
-annotation_file = "/Users/calvindong/Documents/Repos/360_Object_Detection/generation/output/labels/14.txt"
+annotation_file = "/Users/calvindong/Documents/Repos/360_Object_Detection/generation/output/labels/1.txt"
 with open(annotation_file, "r") as file:
     annotation_list = file.read().split("\n")[:-1]
     annotation_list = [x.split(" ") for x in annotation_list]
@@ -53,7 +53,7 @@ with open(annotation_file, "r") as file:
 
 #Get the corresponding image file
 #image_file = annotation_file.replace("annotations", "images").replace("txt", "png")
-image_file = "/Users/calvindong/Documents/Repos/360_Object_Detection/generation/output/14.jpg"
+image_file = "/Users/calvindong/Documents/Repos/360_Object_Detection/generation/output/images/1.jpg"
 assert os.path.exists(image_file)
 
 #Load the image
